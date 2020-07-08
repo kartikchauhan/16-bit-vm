@@ -36,7 +36,7 @@ class CPU {
         if(!(name in this.registerMap))
             throw new Error(`No such register '${name}'`);
 
-        return this.registerMem.getUint16([this.registerMap[name]]);
+        return this.registerMem.getUint16(this.registerMap[name]);
     }
 
     setRegister(name, value) {
@@ -92,3 +92,4 @@ class CPU {
 }
 
 module.exports = CPU;
+

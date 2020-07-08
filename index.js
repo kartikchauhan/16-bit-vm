@@ -11,6 +11,13 @@ const writableBytes = new Uint8Array(memory.buffer);
 
 const cpu = new CPU(memory);
 
+/**
+ * @remarks
+ * | MOV | 0x1234 | r1 | MOV | 0xABCD | r2 | ADD | r1 | r2 |
+ * equivalent to
+ * | 0x10 | 0x12 | 0x34 | 0x11 | 0xAB | 0xCD | ADD | r1 | r2 |
+ */
+
 // Move literal values in register r1
 writableBytes[0] = MOV_LIT_R1;
 writableBytes[1] = 0x12;

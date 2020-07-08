@@ -12,6 +12,11 @@ class CPU {
 
         this.registerMem = createMemory(this.registers.length * 2);
 
+        /**
+         * @remarks Allocate memory to every register.
+         * Final representation will be something like
+         * `{'ip': 0, 'acc': 2, 'r1': 4}
+         */
         this.registerMap = this.registers.reduce((map, name, index) => {
             map[name] = index * 2;
             return map;

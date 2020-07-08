@@ -1,5 +1,11 @@
 const createMemory = require('./create-memory');
-const { MOV_LIT_R1, MOV_LIT_R2, ADD_REG_REG } = require('./instruction');
+const {
+    MOV_LIT_REG,
+    MOV_REG_REG,
+    MOV_REG_MEM,
+    MOV_MEM_REG,
+    ADD_REG_REG
+} = require('./instruction');
 
 class CPU {
     constructor(memory) {
@@ -62,15 +68,34 @@ class CPU {
 
     execute(instruction) {
         switch(instruction) {
-            case MOV_LIT_R1: {
+            case MOV_LIT_REG: {
                 const literal = this.fetch16();
-                this.setRegister('r1', literal);
+                const register = (this.fetch() % this.registers.length) * 2;
+                this.registerMem.setUint16(register, literal);
                 return;
             }
 
-            case MOV_LIT_R2: {
-                const literal = this.fetch16();
-                this.setRegister('r2', literal);
+            case MOV_REG_REG: {
+                const fromRegister = (this.fetch() * this.registers.length) * 2;
+                const toRegister = (this.fetch() * this.registers.length) * 2;
+                const value = this.registerMem.getUint16(fromRegister);
+                this.registerMem.setUint16(toRegister, value);
+                return;
+            }
+
+            case MOV_REG_MEM: {
+                const fromRegister = (this.fetch() * this.registers.length) * 2;
+                const address = this.fetch16;
+                const value = this.registerMem.getUint16(fromRegister);
+                this.memory.setUint16(address, value);
+                return;
+            }
+
+            case MOV_MEM_REG: {
+                const address = this.fetch16();
+                const toRegister = (this.fetch() % this.registers.length) * 2;
+                const value = this.memory.getUint16(address);
+                this.registerMem.setUint16(toRegister, value);
                 return;
             }
 
@@ -92,4 +117,3 @@ class CPU {
 }
 
 module.exports = CPU;
-

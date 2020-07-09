@@ -38,6 +38,16 @@ class CPU {
         console.table(currentRegistersState);
     }
 
+    viewMemoryAt(address) {
+        const next8Bytes = Array.from({length: 8}, (_, index) =>
+            this.memory.getUint8(address + index)
+        ).map(val =>
+            `0x${val.toString(16).padStart(2, '0')}`
+        );
+
+        console.log(`0x${address.toString(16).padStart(4, '0')}: ${next8Bytes.join(' ')}`);
+    }
+
     getRegister(name) {
         if(!(name in this.registerMap))
             throw new Error(`No such register '${name}'`);
@@ -76,16 +86,16 @@ class CPU {
             }
 
             case MOV_REG_REG: {
-                const fromRegister = (this.fetch() * this.registers.length) * 2;
-                const toRegister = (this.fetch() * this.registers.length) * 2;
+                const fromRegister = (this.fetch() % this.registers.length) * 2;
+                const toRegister = (this.fetch() % this.registers.length) * 2;
                 const value = this.registerMem.getUint16(fromRegister);
                 this.registerMem.setUint16(toRegister, value);
                 return;
             }
 
             case MOV_REG_MEM: {
-                const fromRegister = (this.fetch() * this.registers.length) * 2;
-                const address = this.fetch16;
+                const fromRegister = (this.fetch() % this.registers.length) * 2;
+                const address = this.fetch16();
                 const value = this.registerMem.getUint16(fromRegister);
                 this.memory.setUint16(address, value);
                 return;

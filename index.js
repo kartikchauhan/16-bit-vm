@@ -1,12 +1,17 @@
 const CPU = require('./cpu');
 const createMemory = require('./create-memory');
 const {
-    MOV_LIT_R1,
-    MOV_LIT_R2,
+    MOV_LIT_REG,
+    MOV_REG_MEM,
     ADD_REG_REG
 } = require('./instruction');
 
-const memory = createMemory(256);
+const IP = 0;
+const ACC = 1;
+const R1 = 2;
+const R2 = 3;
+
+const memory = createMemory(256 * 256);
 const writableBytes = new Uint8Array(memory.buffer);
 
 const cpu = new CPU(memory);
@@ -18,26 +23,56 @@ const cpu = new CPU(memory);
  * | 0x10 | 0x12 | 0x34 | 0x11 | 0xAB | 0xCD | ADD | r1 | r2 |
  */
 
+let i = 0;
+
 // Move literal values in register r1
-writableBytes[0] = MOV_LIT_R1;
-writableBytes[1] = 0x12;
-writableBytes[2] = 0x34;
+writableBytes[i++] = MOV_LIT_REG;
+writableBytes[i++] = 0x12;
+writableBytes[i++] = 0x34;
+writableBytes[i++] = R1;
 
-writableBytes[3] = MOV_LIT_R2;
-writableBytes[4] = 0xAB;
-writableBytes[5] = 0xCD;
+// Move literal values in register r2
+writableBytes[i++] = MOV_LIT_REG;
+writableBytes[i++] = 0xAB;
+writableBytes[i++] = 0xCD;
+writableBytes[i++] = R2;
 
-writableBytes[6] = ADD_REG_REG;
-writableBytes[7] = 2; // r1 index in registerMemory
-writableBytes[8] = 3; // r2 index in registerMemory
+// Add values in registers r1 & r2
+writableBytes[i++] = ADD_REG_REG;
+writableBytes[i++] = R1;
+writableBytes[i++] = R2;
+
+// Move value from register to memory
+writableBytes[i++] = MOV_REG_MEM;
+writableBytes[i++] = ACC;
+writableBytes[i++] = 0x01;
+writableBytes[i++] = 0x00; // 0x0100
 
 cpu.debug();
+cpu.viewMemoryAt(cpu.getRegister('ip'));
+cpu.viewMemoryAt(0x0100);
+console.log("\n\n");
 
 cpu.step();
 cpu.debug();
+cpu.viewMemoryAt(cpu.getRegister('ip'));
+cpu.viewMemoryAt(0x0100);
+console.log("\n\n");
 
 cpu.step();
 cpu.debug();
+cpu.viewMemoryAt(cpu.getRegister('ip'));
+cpu.viewMemoryAt(0x0100);
+console.log("\n\n");
 
 cpu.step();
 cpu.debug();
+cpu.viewMemoryAt(cpu.getRegister('ip'));
+cpu.viewMemoryAt(0x0100);
+console.log("\n\n");
+
+cpu.step();
+cpu.debug();
+cpu.viewMemoryAt(cpu.getRegister('ip'));
+cpu.viewMemoryAt(0x0100);
+console.log("\n\n");

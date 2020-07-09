@@ -4,7 +4,8 @@ const {
     MOV_REG_REG,
     MOV_REG_MEM,
     MOV_MEM_REG,
-    ADD_REG_REG
+    ADD_REG_REG,
+    JMP_NOT_EQ
 } = require('./instruction');
 
 class CPU {
@@ -115,6 +116,18 @@ class CPU {
                 const r1Value = this.registerMem.getUint16(r1 * 2);
                 const r2Value = this.registerMem.getUint16(r2 * 2);
                 this.setRegister('acc', r1Value + r2Value);
+                return;
+            }
+
+            case JMP_NOT_EQ: {
+                const literal = this.fetch16();
+                const address = this.fetch16();
+                const accValue = this.getRegister('acc');
+
+                if(literal !== accValue) {
+                    this.setRegister('ip', address);
+                }
+
                 return;
             }
         }

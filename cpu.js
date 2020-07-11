@@ -5,16 +5,27 @@ const {
     MOV_REG_MEM,
     MOV_MEM_REG,
     ADD_REG_REG,
-    JMP_NOT_EQ
+    JMP_NOT_EQ,
+    PSH_LIT,
+    PSH_REG,
+    POP
 } = require('./instruction');
 
 class CPU {
     constructor(memory) {
         this.memory = memory;
 
+        /**
+         * @remarks
+         * ip: Instruction Pointer
+         * r1-4: General Purpose Registers
+         * sp: Stack Pointer
+         * fp: Frame Pointer
+         */
         this.registers = [
             'ip', 'acc',
-            'r1', 'r2', 'r3', 'r4'
+            'r1', 'r2', 'r3', 'r4',
+            'sp', 'fp'
         ];
 
         this.registerMem = createMemory(this.registers.length * 2);
@@ -28,6 +39,9 @@ class CPU {
             map[name] = index * 2;
             return map;
         }, {});
+
+        this.setRegister('sp', this.memory.length - 1 - 1); // -1 for zero-indexing, -1 for 2 bytes
+        this.setRegister('fp', this.memory.length - 1 - 1);
     }
 
     debug() {
@@ -75,6 +89,18 @@ class CPU {
         const instruction = this.memory.getUint16(nextInstructionAddress);
         this.setRegister('ip', nextInstructionAddress + 2);
         return instruction;
+    }
+
+    push(value) {
+        const spAddress = this.getRegister('sp');
+        this.memory.setUint16(spAddress, value);
+        this.setRegister('sp', spAddress - 2);
+    }
+
+    pop() {
+        const nextSpAddress = this.getRegister('sp') + 2;
+        this.setRegister('sp', nextSpAddress);
+        return this.memory.getUint16(nextSpAddress);
     }
 
     execute(instruction) {
@@ -128,6 +154,25 @@ class CPU {
                     this.setRegister('ip', address);
                 }
 
+                return;
+            }
+
+            case PSH_LIT: {
+                const value = this.fetch16();
+                this.push(value);
+                return;
+            }
+
+            case PSH_REG: {
+                const register = (this.fetch() % this.registerMem.length) * 2;
+                this.push(this.registerMem.getUint16(register));
+                return;
+            }
+
+            case POP: {
+                const register = (this.fetch() % this.registerMem.length) * 2;
+                const value = this.pop();
+                this.registerMem.setUint16(register, value);
                 return;
             }
         }

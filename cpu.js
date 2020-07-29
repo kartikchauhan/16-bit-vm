@@ -40,8 +40,8 @@ class CPU {
             return map;
         }, {});
 
-        this.setRegister('sp', this.memory.length - 1 - 1); // -1 for zero-indexing, -1 for 2 bytes
-        this.setRegister('fp', this.memory.length - 1 - 1);
+        this.setRegister('sp', this.memory.byteLength - 1 - 1); // -1 for zero-indexing, -1 for 2 bytes
+        this.setRegister('fp', this.memory.byteLength - 1 - 1);
     }
 
     debug() {
@@ -164,13 +164,13 @@ class CPU {
             }
 
             case PSH_REG: {
-                const register = (this.fetch() % this.registerMem.length) * 2;
+                const register = (this.fetch() % this.registers.length) * 2;
                 this.push(this.registerMem.getUint16(register));
                 return;
             }
 
             case POP: {
-                const register = (this.fetch() % this.registerMem.length) * 2;
+                const register = (this.fetch() % this.registers.length) * 2;
                 const value = this.pop();
                 this.registerMem.setUint16(register, value);
                 return;

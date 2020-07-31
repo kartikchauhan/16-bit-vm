@@ -9,7 +9,8 @@ const {
     JMP_NOT_EQ,
     PSH_LIT,
     PSH_REG,
-    POP
+    POP,
+    CAL_LIT
 } = require('./instruction');
 
 const IP  = 0;
@@ -21,29 +22,35 @@ const memory = createMemory(256 * 256);
 const writableBytes = new Uint8Array(memory.buffer);
 
 const cpu = new CPU(memory);
+
+const subRoutineAddress = 0x3000;
 let i = 0;
 
-writableBytes[i++] = MOV_LIT_REG;
-writableBytes[i++] = 0x51;
-writableBytes[i++] = 0x51;
-writableBytes[i++] = R1;
+writableBytes[i++] = PSH_LIT;
+writableBytes[i++] = 0x33;
+writableBytes[i++] = 0x33;
+
+writableBytes[i++] = PSH_LIT;
+writableBytes[i++] = 0x22;
+writableBytes[i++] = 0x22;
+
+writableBytes[i++] = PSH_LIT;
+writableBytes[i++] = 0x11;
+writableBytes[i++] = 0x11;
 
 writableBytes[i++] = MOV_LIT_REG;
-writableBytes[i++] = 0x42;
-writableBytes[i++] = 0x42;
-writableBytes[i++] = R2;
-
-writableBytes[i++] = PSH_REG;
+writableBytes[i++] = 0x12;
+writableBytes[i++] = 0x34;
 writableBytes[i++] = R1;
 
-writableBytes[i++] = PSH_REG;
-writableBytes[i++] = R2;
+writableBytes[i++] = MOV_LIT_REG;
+writableBytes[i++] = 0x56;
+writableBytes[i++] = 0x78;
+writableBytes[i++] = R4;
 
-writableBytes[i++] = POP;
-writableBytes[i++] = R1;
-
-writableBytes[i++] = POP;
-writableBytes[i++] = R2;
+writableBytes[i++] = PSH_LIT;
+writableBytes[i++] = 0x00;
+writableBytes[i++] = 0x00;
 
 cpu.debug();
 cpu.viewMemoryAt(cpu.getRegister('ip'));

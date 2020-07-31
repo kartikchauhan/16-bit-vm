@@ -33,6 +33,11 @@ class CPU {
 
         this.registerMem = createMemory(this.registers.length * 2);
 
+        // Number of General Purpose Registers
+        this.nGPReg = this.registers.reduce((acc, el) => {
+            return el.slice(0, 1) === 'r' && !isNaN(el.slice(1)) ? acc + 1 : acc;
+        }, 0);
+
         /**
          * @remarks Allocate memory to every register.
          * Final representation will be something like
@@ -104,10 +109,10 @@ class CPU {
     }
 
     pushState() {
-        this.push(this.getRegister('r1'));
-        this.push(this.getRegister('r2'));
-        this.push(this.getRegister('r3'));
-        this.push(this.getRegister('r4'));
+        for(let i = 1; i <= this.nGPReg; i++) {
+            this.push(this.getRegister(`r${i}`));
+        }
+
         this.push(this.getRegister('ip'));
         this.push(this.stackFrameSize + 2);
 
@@ -129,10 +134,10 @@ class CPU {
         this.stackFrameSize = this.pop();
 
         this.setRegister('ip', this.pop());
-        this.setRegister('r4', this.pop());
-        this.setRegister('r3', this.pop());
-        this.setRegister('r2', this.pop());
-        this.setRegister('r1', this.pop());
+
+        for(let i = this.nGPReg; i > 0; i--) {
+            this.setRegister(`r${i}`, this.pop());
+        }
 
         const numArgs = this.pop();
         for(let i = 0; i < numArgs; i++) {

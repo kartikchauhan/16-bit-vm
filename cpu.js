@@ -10,7 +10,8 @@ const {
     PSH_REG,
     POP,
     CAL_LIT,
-    CAL_REG
+    CAL_REG,
+    RET
 } = require('./instruction');
 
 class CPU {
@@ -121,6 +122,26 @@ class CPU {
         return this.memory.getUint16(nextSpAddress);
     }
 
+    popState() {
+        const framePointerAddress = this.getRegister('fp');
+        this.setRegister('sp', framePointerAddress);
+
+        this.stackFrameSize = this.pop();
+
+        this.setRegister('ip', this.pop());
+        this.setRegister('r4', this.pop());
+        this.setRegister('r3', this.pop());
+        this.setRegister('r2', this.pop());
+        this.setRegister('r1', this.pop());
+
+        const numArgs = this.pop();
+        for(let i = 0; i < numArgs; i++) {
+            this.pop();
+        }
+
+        this.setRegister('fp', framePointerAddress + this.stackFrameSize);
+    }
+
     execute(instruction) {
         switch(instruction) {
             case MOV_LIT_REG: {
@@ -205,6 +226,11 @@ class CPU {
                 const address = this.registerMem.getUint16(register);
                 this.pushState();
                 this.setRegister('ip', address);
+            }
+
+            case RET: {
+                this.popState();
+                return;
             }
         }
     }

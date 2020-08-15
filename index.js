@@ -55,6 +55,7 @@ writableBytes[i++] = PSH_LIT;
 writableBytes[i++] = 0x00;
 writableBytes[i++] = 0x00;
 
+// Initiates Abstract Stack
 writableBytes[i++] = CAL_LIT;
 writableBytes[i++] = (subRoutineAddress & 0xff00) >> 8;
 writableBytes[i++] = (subRoutineAddress & 0x00ff) >> 8;

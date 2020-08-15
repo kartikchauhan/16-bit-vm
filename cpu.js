@@ -63,14 +63,14 @@ class CPU {
         console.table(currentRegistersState);
     }
 
-    viewMemoryAt(address, n) {
+    viewMemoryAt(address, n = 8) {
         const nextNBytes = Array.from({length: n}, (_, index) =>
             this.memory.getUint8(address + index)
         ).map(val =>
             `0x${val.toString(16).padStart(2, '0')}`
         );
 
-        console.log(`0x${address.toString(16).padStart(4, '0')}: ${nextNBytes.join(' ')}`);
+        console.log('\x1b[32m%s\x1b[0m', `0x${address.toString(16).padStart(4, '0')}`, ':', `${nextNBytes.join(' ')}`);
     }
 
     getRegister(name) {
@@ -131,14 +131,18 @@ class CPU {
         const framePointerAddress = this.getRegister('fp');
         this.setRegister('sp', framePointerAddress);
 
+        // Get Stack frame size
         this.stackFrameSize = this.pop();
 
+        // Get Instruction Pointer address before calling subroutine.
         this.setRegister('ip', this.pop());
 
+        // Populate the registers with the values they had before calling subroutine.
         for(let i = this.nGPReg; i > 0; i--) {
             this.setRegister(`r${i}`, this.pop());
         }
 
+        // Get number of arguments that were passed to the subroutine.
         const numArgs = this.pop();
         for(let i = 0; i < numArgs; i++) {
             this.pop();
@@ -224,6 +228,7 @@ class CPU {
                 const address = this.fetch16();
                 this.pushState();
                 this.setRegister('ip', address);
+                return;
             }
 
             case CAL_REG: {
@@ -231,6 +236,7 @@ class CPU {
                 const address = this.registerMem.getUint16(register);
                 this.pushState();
                 this.setRegister('ip', address);
+                return;
             }
 
             case RET: {

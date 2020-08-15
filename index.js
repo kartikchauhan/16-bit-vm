@@ -10,13 +10,16 @@ const {
     PSH_LIT,
     PSH_REG,
     POP,
-    CAL_LIT
+    CAL_LIT,
+    RET
 } = require('./instruction');
 
 const IP  = 0;
 const ACC = 1;
 const R1  = 2;
 const R2  = 3;
+const R3  = 4;
+const R4  = 5;
 
 const memory = createMemory(256 * 256);
 const writableBytes = new Uint8Array(memory.buffer);
@@ -52,10 +55,44 @@ writableBytes[i++] = PSH_LIT;
 writableBytes[i++] = 0x00;
 writableBytes[i++] = 0x00;
 
+writableBytes[i++] = CAL_LIT;
+writableBytes[i++] = (subRoutineAddress & 0xff00) >> 8;
+writableBytes[i++] = (subRoutineAddress & 0x00ff) >> 8;
+
+writableBytes[i++] = PSH_LIT;
+writableBytes[i++] = 0x44;
+writableBytes[i++] = 0x44;
+
+// Subroutine
+i = subRoutineAddress;
+
+writableBytes[i++] = PSH_LIT;
+writableBytes[i++] = 0x01;
+writableBytes[i++] = 0x02;
+
+writableBytes[i++] = PSH_LIT;
+writableBytes[i++] = 0x03;
+writableBytes[i++] = 0x04;
+
+writableBytes[i++] = PSH_LIT;
+writableBytes[i++] = 0x05;
+writableBytes[i++] = 0x06;
+
+writableBytes[i++] = MOV_LIT_REG;
+writableBytes[i++] = 0x07;
+writableBytes[i++] = 0x08;
+writableBytes[i++] = R1;
+
+writableBytes[i++] = MOV_LIT_REG;
+writableBytes[i++] = 0x09;
+writableBytes[i++] = 0x0A;
+writableBytes[i++] = R4;
+
+writableBytes[i++] = RET;
+
 cpu.debug();
 cpu.viewMemoryAt(cpu.getRegister('ip'));
-// cpu.viewMemoryAt(0x0100);
-cpu.viewMemoryAt(0xffff - 1 - 6); // Since the stack grows upwards, and viewMemoryAt shows following 7 bytes, we subtract 6 from the address.
+cpu.viewMemoryAt(0xffff - 1 - 42, 44); // View memory at next 44 bytes
 console.log("\n\n");
 
 const rl = readline.createInterface({
@@ -67,7 +104,6 @@ rl.on('line', () => {
     cpu.step();
     cpu.debug();
     cpu.viewMemoryAt(cpu.getRegister('ip'));
-    // cpu.viewMemoryAt(0x0100);
-    cpu.viewMemoryAt(0xffff - 1 - 6);
+    cpu.viewMemoryAt(0xffff - 1 - 42, 44);
     console.log("\n\n");
 });

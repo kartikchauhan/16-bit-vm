@@ -38,9 +38,9 @@ const cpu = new CPU(MM);
 
 let i = 0;
 
-const writeCharToScreen = (char, position) => {
+const writeCharToScreen = (char, command = 0x02, position) => {
     writableBytes[i++] = MOV_LIT_REG;
-    writableBytes[i++] = 0x00;
+    writableBytes[i++] = command;
     writableBytes[i++] = char.charCodeAt(0);
     writableBytes[i++] = R1;
     
@@ -50,13 +50,12 @@ const writeCharToScreen = (char, position) => {
     writableBytes[i++] = position;
 };
 
-// "Hello World!".split('').forEach((char, index) => {
-//     writeCharToScreen(char, index);
-// });
+// Clear the screen before printing anything
+writeCharToScreen(' ', 0xff, 0);
 
-for(let index = 0; index <= 0xff; index++) {
-    writeCharToScreen('*', index);
-}
+"Hello World!".split('').forEach((char, index) => {
+    writeCharToScreen(char, 0x02, index);
+});
 
 writableBytes[i++] = HLT;
 

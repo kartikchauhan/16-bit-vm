@@ -48,8 +48,8 @@ class CPU {
             return map;
         }, {});
 
-        this.setRegister('sp', this.memory.byteLength - 1 - 1); // -1 for zero-indexing, -1 for 2 bytes
-        this.setRegister('fp', this.memory.byteLength - 1 - 1);
+        this.setRegister('sp', 0xffff - 1 - 1); // -1 for zero-indexing, -1 for 2 bytes
+        this.setRegister('fp', 0xffff - 1 - 1);
 
         this.stackFrameSize = 0;
     }
@@ -185,10 +185,10 @@ class CPU {
             }
 
             case ADD_REG_REG: {
-                const r1 = this.fetch();
-                const r2 = this.fetch();
-                const r1Value = this.registerMem.getUint16(r1 * 2);
-                const r2Value = this.registerMem.getUint16(r2 * 2);
+                const r1 = (this.fetch() % this.registers.length) * 2;
+                const r2 = (this.fetch() % this.registers.length) * 2;
+                const r1Value = this.registerMem.getUint16(r1);
+                const r2Value = this.registerMem.getUint16(r2);
                 this.setRegister('acc', r1Value + r2Value);
                 return;
             }

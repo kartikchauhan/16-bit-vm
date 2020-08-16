@@ -11,7 +11,8 @@ const {
     POP,
     CAL_LIT,
     CAL_REG,
-    RET
+    RET,
+    HLT
 } = require('./instruction');
 
 class CPU {
@@ -243,12 +244,23 @@ class CPU {
                 this.popState();
                 return;
             }
+
+            case HLT: {
+                return true;
+            }
         }
     }
 
     step() {
         const instruction = this.fetch();
         return this.execute(instruction);
+    }
+
+    run() {
+        const halt = this.step();
+        if(!halt) {
+            setImmediate(() => this.run());
+        }
     }
 }
 

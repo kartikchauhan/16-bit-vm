@@ -50,9 +50,13 @@ const writeCharToScreen = (char, position) => {
     writableBytes[i++] = position;
 };
 
-"Hello World!".split('').forEach((char, index) => {
-    writeCharToScreen(char, index);
-});
+// "Hello World!".split('').forEach((char, index) => {
+//     writeCharToScreen(char, index);
+// });
+
+for(let index = 0; index <= 0xff; index++) {
+    writeCharToScreen('*', index);
+}
 
 writableBytes[i++] = HLT;
 

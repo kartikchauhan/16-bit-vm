@@ -402,6 +402,15 @@ class CPU {
                 return;
             }
 
+            // Not (invert) register
+            case NOT: {
+                const register = (this.fetch() % this.registers.length) * 2;
+                const value = this.registerMem.getUint16(register);
+                const result = (~value) & 0xffff;
+                this.setRegister('acc', result);
+                return;
+            }
+
             case JMP_NOT_EQ: {
                 const literal = this.fetch16();
                 const address = this.fetch16();

@@ -23,6 +23,20 @@ const DEC_REG         = 0x25;
 const MUL_LIT_REG     = 0x26;
 const MUL_REG_REG     = 0x27;
 
+// Logical instructions
+const LSF_REG_LIT = 0x28;
+const LSF_REG_REG = 0x29;
+const RSF_REG_LIT = 0x2A;
+const RSF_REG_REG = 0x2B;
+const AND_REG_LIT = 0x2C;
+const AND_REG_REG = 0x2D;
+const OR_REG_LIT  = 0x2E;
+const OR_REG_REG  = 0x2F;
+const XOR_REG_LIT = 0x30;
+const XOR_REG_REG = 0x31;
+const NOT         = 0x32;
+
+
 module.exports = {
     MOV_LIT_REG,
     MOV_REG_REG,
@@ -47,5 +61,16 @@ module.exports = {
     CAL_LIT,
     CAL_REG,
     RET,
-    HLT
+    HLT,
+    LSF_REG_LIT,
+    LSF_REG_REG,
+    RSF_REG_LIT,
+    RSF_REG_REG,
+    AND_REG_LIT,
+    AND_REG_REG,
+    OR_REG_LIT,
+    OR_REG_REG,
+    XOR_REG_LIT,
+    XOR_REG_REG,
+    NOT
 };

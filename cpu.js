@@ -383,6 +383,25 @@ class CPU {
                 return;
             }
 
+            // Xor register with literal
+            case XOR_REG_LIT: {
+                const register = (this.fetch() % this.registers.length) * 2;
+                const value = this.registerMem.getUint16(register);
+                const literal = this.fetch16();
+                this.setRegister('acc', value ^ literal);
+                return;
+            }
+
+            // Xor register with register
+            case XOR_REG_REG: {
+                const r1 = (this.fetch() % this.registers.length) * 2;
+                const r2 = (this.fetch() % this.registers.length) * 2;
+                const r1Value = this.registerMem.getUint16(r1);
+                const r2Value = this.registerMem.getUint16(r2);
+                this.setRegister('acc', r1Value ^ r2Value);
+                return;
+            }
+
             case JMP_NOT_EQ: {
                 const literal = this.fetch16();
                 const address = this.fetch16();

@@ -23,7 +23,17 @@ const {
     CAL_LIT,
     CAL_REG,
     RET,
-    HLT
+    HLT,
+    LSF_REG_LIT,
+    LSF_REG_REG,
+    RSF_REG_LIT,
+    RSF_REG_REG,
+    AND_REG_LIT,
+    AND_REG_REG,
+    OR_REG_LIT, 
+    OR_REG_REG, 
+    XOR_REG_LIT,
+    XOR_REG_REG
 } = require('./instruction');
 
 class CPU {
@@ -281,6 +291,7 @@ class CPU {
                 return;
             }
 
+            // Increment value in register (in place)
             case INC_REG: {
                 const register = (this.fetch() % this.registers.length) * 2;
                 const value = this.registerMem.getUint16(register);
@@ -288,6 +299,7 @@ class CPU {
                 return;
             }
 
+            // Decement value in register (in place)
             case DEC_REG: {
                 const register = (this.fetch() % this.registers.length) * 2;
                 const value = this.registerMem.getUint16(register);

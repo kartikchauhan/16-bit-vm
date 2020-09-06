@@ -269,6 +269,30 @@ class CPU {
                 const register = (this.fetch() % this.registers.length) * 2;
                 const value = this.registerMem.getUint16(register);
                 this.setRegister('acc', literal * value);
+                return;
+            }
+            
+            case MUL_REG_REG: {
+                const r1 = (this.fetch() % this.registers.length) * 2;
+                const r2 = (this.fetch() % this.registers.length) * 2;
+                const r1Value = this.registerMem.getUint16(r1);
+                const r2Value = this.registerMem.getUint16(r2);
+                this.setRegister('acc', r1Value * r2Value);
+                return;
+            }
+
+            case INC_REG: {
+                const register = (this.fetch() % this.registers.length) * 2;
+                const value = this.registerMem.getUint16(register);
+                this.registerMem.setUint16(register, ++value);
+                return;
+            }
+
+            case DEC_REG: {
+                const register = (this.fetch() % this.registers.length) * 2;
+                const value = this.registerMem.getUint16(register);
+                this.registerMem.setUint16(register, --value);
+                return;
             }
 
             case JMP_NOT_EQ: {

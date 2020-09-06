@@ -14,6 +14,14 @@ const HLT             = 0x1C;
 const MOV_LIT_MEM     = 0x1D;
 const MOV_REG_PTR_REG = 0x1E; // Move register pointer to register
 const MOV_LIT_OFF_REG = 0x1F; // Move literal + register to register
+const ADD_LIT_REG     = 0x20;
+const SUB_LIT_REG     = 0x21;
+const SUB_REG_LIT     = 0x22;
+const SUB_REG_REG     = 0x23;
+const INC_REG         = 0x24;
+const DEC_REG         = 0x25;
+const MUL_LIT_REG     = 0x26;
+const MUL_REG_REG     = 0x27;
 
 module.exports = {
     MOV_LIT_REG,
@@ -24,6 +32,14 @@ module.exports = {
     MOV_REG_PTR_REG,
     MOV_LIT_OFF_REG,
     ADD_REG_REG,
+    ADD_LIT_REG,
+    SUB_LIT_REG,
+    SUB_REG_LIT,
+    SUB_REG_REG,
+    INC_REG,
+    DEC_REG,
+    MUL_LIT_REG,
+    MUL_REG_REG,
     JMP_NOT_EQ,
     PSH_LIT,
     PSH_REG,

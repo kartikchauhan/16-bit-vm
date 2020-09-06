@@ -4,6 +4,9 @@ const {
     MOV_REG_REG,
     MOV_REG_MEM,
     MOV_MEM_REG,
+    MOV_LIT_MEM,
+    MOV_REG_PTR_REG,
+    MOV_LIT_OFF_REG,
     ADD_REG_REG,
     JMP_NOT_EQ,
     PSH_LIT,
@@ -182,6 +185,13 @@ class CPU {
                 const toRegister = (this.fetch() % this.registers.length) * 2;
                 const value = this.memory.getUint16(address);
                 this.registerMem.setUint16(toRegister, value);
+                return;
+            }
+
+            case MOV_LIT_MEM: {
+                const value = this.fetch16();
+                const address = this.fetch16();
+                this.memory.setUint16(address, value);
                 return;
             }
 

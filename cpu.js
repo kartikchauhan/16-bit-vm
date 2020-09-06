@@ -8,6 +8,14 @@ const {
     MOV_REG_PTR_REG,
     MOV_LIT_OFF_REG,
     ADD_REG_REG,
+    ADD_LIT_REG,
+    SUB_LIT_REG,
+    SUB_REG_LIT,
+    SUB_REG_REG,
+    INC_REG,
+    DEC_REG,
+    MUL_LIT_REG,
+    MUL_REG_REG,
     JMP_NOT_EQ,
     PSH_LIT,
     PSH_REG,
@@ -221,6 +229,13 @@ class CPU {
                 const r2Value = this.registerMem.getUint16(r2);
                 this.setRegister('acc', r1Value + r2Value);
                 return;
+            }
+
+            case ADD_LIT_REG: {
+                const literal = this.fetch16();
+                const register = (this.fetch() % this.registers.length) * 2;
+                const value = this.registerMem.getUint16(register);
+                this.setRegister('acc', literal + value);
             }
 
             case JMP_NOT_EQ: {

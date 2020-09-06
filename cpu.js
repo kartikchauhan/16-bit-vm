@@ -195,6 +195,25 @@ class CPU {
                 return;
             }
 
+            case MOV_REG_PTR_REG: {
+                const r1 = (this.fetch() % this.registers.length) * 2;
+                const r2 = (this.fetch() % this.registers.length) * 2;
+                const ptr = this.registers.getUint16(r1);
+                const value = this.memory.getUint16(ptr);
+                this.registerMem.setUint16(r2, value);
+                return;
+            }
+
+            case MOV_LIT_OFF_REG: {
+                const baseAddress = this.fetch16();
+                const r1 = (this.fetch() % this.registers.length) * 2; // register that holds the offset
+                const r2 = (this.fetch() % this.registers.length) * 2;
+                const offset = this.registerMem.getUint16(r1);
+                const value = this.memory.getUint16(baseAddress + offset);
+                this.registerMem.setUint16(r2, value);
+                return;
+            }
+
             case ADD_REG_REG: {
                 const r1 = (this.fetch() % this.registers.length) * 2;
                 const r2 = (this.fetch() % this.registers.length) * 2;
